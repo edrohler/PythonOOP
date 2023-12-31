@@ -1,24 +1,36 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from infrastructure.entities.base_entity import BaseEntity, Person, Address, Email
+from src.infrastructure.orm.entities import BaseEntity
 
-# Database URI (Change according to your database)
-DATABASE_URI = 'sqlite:///mylibrary.db'  # Example for SQLite
-# For other databases, the URI format will differ. For example,
-# PostgreSQL: 'postgresql://user:password@localhost/mylibrary'
+class DatabaseConfig:
+    def __init__(self, database_uri='sqlite:///database.db', echo=True):
+        self.database_uri = database_uri
+        self.echo = echo
+        self.engine = None
+        self.Session = None
 
+    def init_engine(self):
+        self.engine = create_engine(self.database_uri, echo=self.echo)
+        self.Session = sessionmaker(bind=self.engine)
 
-# Create the SQLAlchemy engine with the database URI
-engine = create_engine(DATABASE_URI, echo=True)  # Set echo to False in production
+    def init_db(self):
+        """ Initialize the database (create tables based on models) """
+        if not self.engine:
+            self.init_engine()
+        BaseEntity.metadata.create_all(self.engine)
 
-# Create a session factory bound to this engine
-Session = sessionmaker(bind=engine)
+    def get_session(self):
+        """ Returns a new session instance from the session factory """
+        if not self.Session:
+            self.init_engine()
+        return self.Session()
+
+# Default configuration
+default_config = DatabaseConfig()
 
 def init_db():
-    """ Initialize the database (create tables based on models) """
-    BaseEntity.metadata.create_all(engine)
+    default_config.init_db()
 
 def get_session():
-    """ Returns a new session instance from the session factory """
-    return Session()
+    return default_config.get_session()

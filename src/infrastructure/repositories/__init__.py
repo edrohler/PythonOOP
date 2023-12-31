@@ -1,0 +1,4 @@
+from .address_repository import AddressRepository
+from .email_repository import EmailRepository
+from .generic_repository import GenericRepository
+from .person_repository import PersonRepository
