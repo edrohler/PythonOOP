@@ -11,15 +11,18 @@ class LoggingService:
     def __init__(self, logger_name, log_level=logging.INFO, handler=None):
         if not hasattr(self, 'initialized'):  # Avoid re-initialization
             self.logger = logging.getLogger(logger_name)
+            self.logger.propagate = False
             self.logger.setLevel(log_level)
 
-            if handler is None:
-                handler = logging.FileHandler(f'logs/{logger_name}.log')
+            if not self.logger.handlers:
+                if handler is None:
+                    handler = logging.FileHandler(f'logs/{logger_name}.log')
 
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            handler.setFormatter(formatter)
-            self.logger.addHandler(handler)
-            self.initialized = True
+                formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+                handler.setFormatter(formatter)
+                self.logger.addHandler(handler)
+                                
+        self.initialized = True
 
     def log_info(self, message):
         self.logger.info(message)

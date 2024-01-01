@@ -13,7 +13,7 @@ from .endpoints.address import ns as address_ns
 app = Flask(__name__)
 
 # Configure logging
-logger = LoggingService(logger_name='api', log_level='DEBUG', handler=logging.FileHandler('api.log'))
+logger = LoggingService(logger_name='api', log_level='DEBUG', handler=logging.FileHandler('logs/.log'))
 
 # Configure database
 db_config = DatabaseConfig(database_uri="sqlite:///database.db", echo=True, logger=logger)
