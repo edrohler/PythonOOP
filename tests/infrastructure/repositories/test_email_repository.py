@@ -3,8 +3,8 @@ from src.infrastructure.repositories.generic_repository import GenericRepository
 from src.infrastructure.orm.entities.email import Email
 
 @pytest.fixture
-def email_repository(test_session):
-    return GenericRepository(test_session, Email)
+def email_repository(test_session, mock_logger):
+    return GenericRepository(test_session, Email, mock_logger)
 
 def test_add_and_retrieve_email(email_repository, test_session):
     new_email = Email(email_address="test1@nomail.com", person_id=1)

@@ -1,10 +1,10 @@
 from src.core.services.logging_service import LoggingService
 
 class GenericRepository:
-    def __init__(self, session, model):
+    def __init__(self, session, model, logger=None):
         self.session = session
         self.model = model
-        self.logger = LoggingService(self.__class__.__name__)
+        self.logger = logger
 
     def add(self, entity):
         self.session.add(entity)

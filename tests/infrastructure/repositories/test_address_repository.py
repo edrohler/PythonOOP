@@ -3,8 +3,8 @@ from src.infrastructure.repositories.generic_repository import GenericRepository
 from src.infrastructure.orm.entities.address import Address
 
 @pytest.fixture
-def address_repository(test_session):
-    return GenericRepository(test_session, Address)
+def address_repository(test_session, mock_logger):
+    return GenericRepository(test_session, Address, mock_logger)
 
 def test_add_and_retrieve_address(address_repository, test_session):
     new_address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zipcode="12345", person_id=1)

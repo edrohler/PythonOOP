@@ -1,8 +1,8 @@
+from pytest_mock import mocker
 from sqlalchemy import text
 
 def test_init_engine(test_database_config):
     """ Test if `init_engine` correctly initializes the engine. """
-    # Assuming init_engine is called within init_db
     assert test_database_config.engine is not None
     assert test_database_config.Session is not None
 

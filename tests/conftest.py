@@ -1,20 +1,26 @@
+from unittest.mock import patch
 import pytest
-from sqlalchemy.orm import Session
 
+from src.core.services.logging_service import LoggingService
 from src.infrastructure.database import DatabaseConfig
 
 @pytest.fixture
-def mock_session(mocker):
-    return mocker.MagicMock(spec=Session)
+def mock_logger(mocker):
+    return mocker.Mock(spec=LoggingService)
 
-@pytest.fixture(scope="module")
-def test_database_config():
+@pytest.fixture
+def mock_database_config(mock_logger):
+    # Function-scoped fixture that uses a mock logger
+    return DatabaseConfig('sqlite:///:memory:', echo=False, logger=mock_logger)
+
+@pytest.fixture
+def test_database_config(mocker, mock_database_config):
     # Setup a test database configuration
-    test_config = DatabaseConfig('sqlite:///:memory:', echo=False)
+    test_config = mock_database_config
     test_config.init_db()
     return test_config
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def test_session(test_database_config):
     # Create a new session for testing
     return test_database_config.get_session()

@@ -3,9 +3,9 @@ from src.infrastructure.repositories.generic_repository import GenericRepository
 from src.infrastructure.orm.entities.person import Person
 
 @pytest.fixture
-def person_repository(test_session):
+def person_repository(test_session, mock_logger):
     # Create a Person repository for testing
-    return GenericRepository(test_session, Person)
+    return GenericRepository(test_session, Person, mock_logger)
 
 def test_add_and_retrieve_person(person_repository, test_session):
     # Add a person to the test database

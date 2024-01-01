@@ -4,12 +4,12 @@ from src.infrastructure.orm.entities import BaseEntity
 from src.core.services.logging_service import LoggingService
 
 class DatabaseConfig:
-    def __init__(self, database_uri='sqlite:///database.db', echo=True):
+    def __init__(self, database_uri='sqlite:///database.db', echo=True, logger=None):
         self.database_uri = database_uri
         self.echo = echo
         self.engine = None
         self.Session = None
-        self.logger = LoggingService(self.__class__.__name__)
+        self.logger = logger
 
     def init_engine(self):
         self.engine = create_engine(self.database_uri, echo=self.echo)
@@ -30,11 +30,11 @@ class DatabaseConfig:
         self.logger.log_info('Created new session')
         return self.Session()
 
-# Default configuration
-default_config = DatabaseConfig()
+# # Default configuration
+# default_config = DatabaseConfig()
 
-def init_db():
-    default_config.init_db()
+def init_db(config):
+    config.init_db()
 
-def get_session():
-    return default_config.get_session()
+def get_session(config):
+    return config.get_session()
