@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.infrastructure.orm.entities import BaseEntity
-from src.core.services.logging_service import LoggingService
+from .orm.entities import BaseEntity
 
 class DatabaseConfig:
     def __init__(self, database_uri='sqlite:///database.db', echo=True, logger=None):
@@ -29,9 +28,6 @@ class DatabaseConfig:
             self.init_engine()
         self.logger.log_info('Created new session')
         return self.Session()
-
-# # Default configuration
-# default_config = DatabaseConfig()
 
 def init_db(config):
     config.init_db()
