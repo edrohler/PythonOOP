@@ -1,5 +1,3 @@
-
-
 from src.infrastructure.orm.entities.person import Person
 from src.infrastructure.repositories.generic_repository import GenericRepository
 
