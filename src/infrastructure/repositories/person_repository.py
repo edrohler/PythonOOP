@@ -5,5 +5,5 @@ from src.infrastructure.repositories.generic_repository import GenericRepository
 
 
 class PersonRepository(GenericRepository):
-    def __init__(self, session):
-        super().__init__(session, Person)
+    def __init__(self, session, logger):
+        super().__init__(session, Person, logger)
