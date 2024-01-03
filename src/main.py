@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     if args.serve:
-        app.run(debug=True)
+        app.run(debug=False)
 
 if __name__ == "__main__":
     main()
