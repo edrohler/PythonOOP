@@ -5,23 +5,26 @@ from flask_restx import Api
 from core.services.logging_service import LoggingService
 from infrastructure.database import get_session
 from infrastructure.database import DatabaseConfig
+from infrastructure.unit_of_work import UnitOfWork
+
 
 # from .endpoints.person import ns as person_ns
-from .endpoints.address import ns as address_ns
+from .endpoints.address import create_address_namespace
 # from .endpoints.email import ns as email_ns
-
-app = Flask(__name__)
 
 # Configure logging
 logger = LoggingService(logger_name='api', log_level='DEBUG', handler=logging.FileHandler('logs/.log'))
 
 # Configure database
-db_config = DatabaseConfig(database_uri="sqlite:///database.db", echo=True, logger=logger)
+db_config = DatabaseConfig.get_instance(database_uri="sqlite:///database.db", echo=True, logger=logger)
 db_config.init_db()
-session = get_session(db_config)
 
+# Create UnitOfWork
+uow = UnitOfWork().get_instance(db_config, logger)
+
+app = Flask(__name__)
 api = Api()
 api.init_app(app)
+
+address_ns = create_address_namespace(uow)
 api.add_namespace(address_ns)
-# api.add_namespace(email_ns)
-# api.add_namespace(person_ns)

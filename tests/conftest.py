@@ -5,8 +5,13 @@ from src.core.services.logging_service import LoggingService
 from src.infrastructure.database import DatabaseConfig
 
 @pytest.fixture
+def mock_file_handler(mocker):
+    with patch('logging.FileHandler') as mock:
+        yield mock
+
+@pytest.fixture
 def mock_logger(mocker):
-    return mocker.Mock(spec=LoggingService)
+    return LoggingService.get_instance('TestLogger')
 
 @pytest.fixture
 def mock_database_config(mock_logger):

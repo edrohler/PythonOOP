@@ -1,7 +1,7 @@
 from src.core.services.logging_service import LoggingService
 
 class GenericRepository:
-    def __init__(self, session, model, logger=None):
+    def __init__(self, session, model, logger: LoggingService=None):
         self.session = session
         self.model = model
         self.logger = logger

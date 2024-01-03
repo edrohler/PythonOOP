@@ -1,25 +1,37 @@
-import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from src.infrastructure.unit_of_work import UnitOfWork
-from src.infrastructure.repositories import AddressRepository, EmailRepository, PersonRepository
 
-def test_unit_of_work(test_session, mock_database_config, mock_logger):
-    # Act
-    mock_database_config.get_session = MagicMock(return_value=test_session)
-    uow = UnitOfWork(mock_database_config, mock_logger)
-    
-    # Assert
-    assert isinstance(uow.address_repository, AddressRepository)
-    assert isinstance(uow.email_repository, EmailRepository)
-    assert isinstance(uow.person_repository, PersonRepository)
-    assert uow.session is test_session
+def test_unit_of_work_singleton(mock_database_config, mock_logger):
+    uow1 = UnitOfWork.get_instance(mock_database_config, mock_logger)
+    uow2 = UnitOfWork.get_instance(mock_database_config, mock_logger)
+    assert uow1 is uow2
 
-def test_unit_of_work_session_close(test_session, mock_database_config, mock_logger):
-    # Act
-    with patch('src.infrastructure.database.DatabaseConfig.get_session', return_value=test_session), \
-         patch.object(UnitOfWork, '__exit__') as mock_exit: 
-        with UnitOfWork(config=mock_database_config, logger=mock_logger) as uow:
-            pass
-    
-    # Assert
-    mock_exit.assert_called_once()
+def test_unit_of_work_initialization(mock_database_config, mock_logger):
+    uow = UnitOfWork.get_instance(mock_database_config, mock_logger)
+    assert uow.address_repository is not None
+    assert uow.email_repository is not None
+    assert uow.person_repository is not None
+
+def test_unit_of_work_enter(mock_database_config, mock_logger):
+    uow = UnitOfWork.get_instance(mock_database_config, mock_logger)
+    with uow as entered_uow:
+        assert entered_uow is uow
+        # TODO: Check for logger messages
+
+def test_unit_of_work_exit_session_closed(mock_database_config, mock_logger):
+    # Reset UnitOfWork instance for a clean test environment
+    UnitOfWork._instance = None
+
+    # Mock the session object
+    mock_session = MagicMock()
+    mock_database_config.get_session = MagicMock(return_value=mock_session)
+
+    # Create UnitOfWork instance
+    uow = UnitOfWork.get_instance(mock_database_config, mock_logger)
+
+    # Use the UnitOfWork instance in a context manager
+    with uow:
+        pass
+
+    # Verify if the session's close method was called
+    assert mock_session.close.called, "Session close method was not called"
