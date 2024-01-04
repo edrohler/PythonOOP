@@ -9,7 +9,8 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "--serve"
+                "--serve",
+                "--debug"
             ]
         }
     ]
