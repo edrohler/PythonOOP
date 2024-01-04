@@ -24,17 +24,15 @@ app = Flask(__name__)
 
 api_version = "v1"
 
-# Register blueprint
+# Create blueprint
 blueprint = Blueprint('api', __name__, url_prefix=f"/api/{api_version}")
 api = Api(blueprint)
+
+# Add Namespaces
 api.add_namespace(create_address_ns(uow, api_version))
 api.add_namespace(create_email_ns(uow, api_version))
 api.add_namespace(create_person_ns(uow, api_version))
+
+# Register blueprint
 app.register_blueprint(blueprint)
 
-# address_bp = create_address_blueprint(uow, api_version)
-# app.register_blueprint(address_bp, route_prefix=f"/api/{api_version}")
-# email_bp = create_email_blueprint(uow, api_version)
-# app.register_blueprint(email_bp, route_prefix=f"/api/{api_version}")
-# person_bp = create_person_blueprint(uow, api_version)
-# app.register_blueprint(person_bp, route_prefix=f"/api/{api_version}")
