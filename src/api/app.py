@@ -22,16 +22,19 @@ uow = UnitOfWork.get_instance(db_config, logger)
 
 app = Flask(__name__)
 
-api_version = "v1"
+api_version = "1"
 
 # Create blueprint
-blueprint = Blueprint('api', __name__, url_prefix=f"/api/{api_version}")
-api = Api(blueprint)
+blueprint = Blueprint('api', __name__)
+api = Api(blueprint, version=api_version, title='API', description='A Simple API')
 
 # Add Namespaces
-api.add_namespace(create_address_ns(uow, api_version))
-api.add_namespace(create_email_ns(uow, api_version))
-api.add_namespace(create_person_ns(uow, api_version))
+address_versoin = "1"
+api.add_namespace(create_address_ns(uow, address_versoin))
+email_verson = "1"
+api.add_namespace(create_email_ns(uow, email_verson))
+person_version = "1"
+api.add_namespace(create_person_ns(uow, person_version))
 
 # Register blueprint
 app.register_blueprint(blueprint)

@@ -3,7 +3,7 @@ from flask_restx import Api, Resource, Namespace
 from src.core.domain.viewmodels import Email
 
 def create_email_ns(uow, version):
-    ns = Namespace(f"Email Endpoints", description="Email API", path=f"/email")
+    ns = Namespace(f"Email Endpoints", description="Email API", path=f"/api/v{version}/email")
     
     @ns.route("/")
     class EmailList(Resource):

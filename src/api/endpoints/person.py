@@ -3,7 +3,7 @@ from flask_restx import Api, Resource, Namespace
 from src.core.domain.viewmodels import Person
 
 def create_person_ns(uow,version):
-    ns = Namespace(f"People Endpoints", description="Person API", path=f"/people")
+    ns = Namespace(f"People Endpoints", description="Person API", path=f"/api/v{version}/people")
 
     @ns.route("/")
     class PeopleList(Resource):

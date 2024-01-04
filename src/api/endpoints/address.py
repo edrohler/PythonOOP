@@ -3,7 +3,7 @@ from flask_restx import Api, Resource, Namespace
 from src.core.domain.viewmodels import Address
 
 def create_address_ns(uow, version):
-    ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/address")
+    ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/api/v{version}/address")
     @ns.route("/")
     class AddressList(Resource):
         def get(self):
