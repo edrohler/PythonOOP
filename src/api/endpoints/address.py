@@ -1,15 +1,13 @@
 from flask import Blueprint, request
 from flask_restx import Api, Resource, Namespace
+from src.core.domain.viewmodels import Address
 
-def create_address_blueprint(uow, version):
-    address_bp = Blueprint("address", __name__)
-    address_api = Api(address_bp,version=version, description="PII API")
-    ns = Namespace(f"api/{version}", description="Address API")
-    address_api.add_namespace(ns)
-
-    @ns.route("/addresses")
+def create_address_ns(uow, version):
+    ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/address")
+    @ns.route("/")
     class AddressList(Resource):
         def get(self):
+            """Get all addresses."""
             addresses = uow.address_repository.get_all()
             return addresses
         
@@ -21,8 +19,8 @@ def create_address_blueprint(uow, version):
             uow.commit()
             return {"message": "Address created"}, 201
 
-    @ns.route("/addresses/<int:id>")
-    class Address(Resource):
+    @ns.route("/<int:id>")
+    class AddressResource(Resource):
         def get(self, id):
             """Get an address by ID."""
             address = uow.address_repository.get_by_id(id)
@@ -41,4 +39,4 @@ def create_address_blueprint(uow, version):
             uow.address_repository.delete(id)
             return {"message": "Address deleted"}, 200
 
-    return address_bp
+    return ns
