@@ -1,13 +1,13 @@
-from flask import Blueprint, request
-from flask_restx import Api, Resource, Namespace, fields
+from flask import request
+from flask_restx import Resource, Namespace
 from src.api.schemas.address import AddressSchema
-from src.api.utils import schema_to_model
+from src.api.utils import schema_to_api_model
 from src.core.domain.models import Address
 from src.core.services.logging_service import LoggingService
 
 def create_address_ns(api, uow, version, logger: LoggingService):
     ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/api/v{version}/address")
-    address_model = schema_to_model(AddressSchema, api)
+    address_model = schema_to_api_model(AddressSchema, api)
     @ns.route("/")
     class AddressList(Resource):
         def get(self):

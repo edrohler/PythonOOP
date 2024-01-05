@@ -1,13 +1,13 @@
 from flask import request
 from flask_restx import Resource, Namespace
 from src.api.schemas.person import PersonSchema
-from src.api.utils import schema_to_model
+from src.api.utils import schema_to_api_model
 from src.core.domain.models import Person
 from src.core.services.logging_service import LoggingService
 
 def create_person_ns(api,uow,version, logger: LoggingService):
     ns = Namespace(f"Person Endpoints", description="Person API", path=f"/api/v{version}/person")
-    person_api_model = schema_to_model(PersonSchema, api)
+    person_api_model = schema_to_api_model(PersonSchema, api)
     @ns.route("/")
     class PeopleList(Resource):
         def get(self):

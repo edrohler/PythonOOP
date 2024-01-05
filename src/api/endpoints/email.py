@@ -1,13 +1,13 @@
 from flask import request
 from flask_restx import Resource, Namespace
 from src.api.schemas.email import EmailSchema
-from src.api.utils import schema_to_model
+from src.api.utils import schema_to_api_model
 from src.core.domain.models import Email
 from src.core.services.logging_service import LoggingService
 
 def create_email_ns(api, uow, version, logger: LoggingService):
     ns = Namespace(f"Email Endpoints", description="Email API", path=f"/api/v{version}/email")
-    email_model = schema_to_model(EmailSchema, api)
+    email_model = schema_to_api_model(EmailSchema, api)
     @ns.route("/")
     class EmailList(Resource):
         def get(self):
