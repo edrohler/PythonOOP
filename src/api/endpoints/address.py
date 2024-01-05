@@ -1,20 +1,12 @@
 from flask import Blueprint, request
 from flask_restx import Api, Resource, Namespace, fields
-from src.core.domain.viewmodels import Address
-
-def create_address_model(api):
-    return api.model('Address', {
-        'address_line_1': fields.String(required=True, description='Address line 1'),
-        'address_line_2': fields.String(required=False, description='Address line 2'),
-        'city': fields.String(required=True, description='City'),
-        'state': fields.String(required=True, description='State'),
-        'zipcode': fields.String(required=True, description='Zipcode'),
-        'person_id': fields.Integer(required=True, description='Person ID')
-    })
+from src.api.schemas.address import AddressSchema
+from src.api.utils import schema_to_model
+from src.core.domain.models import Address
 
 def create_address_ns(api, uow, version):
     ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/api/v{version}/address")
-    address_model = create_address_model(api)
+    address_model = schema_to_model(AddressSchema, api)
     @ns.route("/")
     class AddressList(Resource):
         def get(self):
@@ -25,7 +17,7 @@ def create_address_ns(api, uow, version):
         def post(self):
             """Create a new address."""
             try:
-                data = api.payload
+                data = AddressSchema().load(request.json)
                 address = Address(**data)
                 uow.address_repository.add(address)
                 uow.commit()

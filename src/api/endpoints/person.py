@@ -1,29 +1,26 @@
 from flask import request
-from flask_restx import Resource, Namespace, fields
-from src.core.domain.viewmodels import Person
+from flask_restx import Resource, Namespace
+from src.api.schemas.person import PersonSchema
+from src.api.utils import schema_to_model
+from src.core.domain.models import Person
 
-def create_person_model(api):
-    return api.model('Person', {
-        'first_name': fields.String(required=True, description='First name'),
-        'last_name': fields.String(required=True, description='Last name'),
-        'gender': fields.String(required=True, description='Age', length=1)
-    })
 
 def create_person_ns(api,uow,version):
     ns = Namespace(f"Person Endpoints", description="Person API", path=f"/api/v{version}/person")
-    person_model = create_person_model(api)
+    person_api_model = schema_to_model(PersonSchema, api)
     @ns.route("/")
     class PeopleList(Resource):
         def get(self):
             """Get all persons."""
             persons = uow.person_repository.get_all()
+            result = PersonSchema(many=True).dump(persons)
             return persons
         
-        @ns.expect(person_model, validate=True)
+        @ns.expect(person_api_model, validate=True)
         def post(self):
             """Create a new person."""            
             try:
-                data = api.payload
+                data = PersonSchema().load(request.json)
                 person = Person(**data)
                 uow.person_repository.add(person)
                 uow.commit()
@@ -42,9 +39,12 @@ def create_person_ns(api,uow,version):
 
         def put(self, id):
             """Update an existing person."""
-            data = api.payload
-            uow.person_repository.update(id, **data)
-            return {"message": "Person updated"}, 200
+            try:
+                data = api.payload
+                uow.person_repository.update(id, **data)
+                return {"message": "Person updated"}, 200
+            except Exception as e:
+                return {"message": str(e)}, 400
         
         def delete(self, id):
             """Delete a person."""
