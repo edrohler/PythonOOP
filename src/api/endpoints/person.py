@@ -3,9 +3,10 @@ from flask_restx import Resource, Namespace
 from src.api.schemas.person import PersonSchema
 from src.api.utils import schema_to_model
 from src.core.domain.models import Person
+from src.core.services.logging_service import LoggingService
 
 
-def create_person_ns(api,uow,version):
+def create_person_ns(api,uow,version, logger: LoggingService):
     ns = Namespace(f"Person Endpoints", description="Person API", path=f"/api/v{version}/person")
     person_api_model = schema_to_model(PersonSchema, api)
     @ns.route("/")
@@ -26,7 +27,8 @@ def create_person_ns(api,uow,version):
                 uow.commit()
                 return {"message": "Person created"}, 201
             except Exception as e:
-                return {"message": str(e)}, 400
+                logger.log_error(e)
+                return {"message": "An Error Occurred"}, 400
         
     @ns.route("/<int:id>")
     class PeopleResource(Resource):
