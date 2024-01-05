@@ -1,9 +1,9 @@
 from flask import request
 from flask_restx import Resource, Namespace
-from src.api.schemas.email import EmailSchema
 from src.api.utils import schema_to_api_model
 from src.core.domain.models import Email
 from src.core.services.logging_service import LoggingService
+from src.core.serialization.email import EmailSchema
 
 def create_email_ns(api, uow, version, logger: LoggingService):
     ns = Namespace(f"Email Endpoints", description="Email API", path=f"/api/v{version}/email")
