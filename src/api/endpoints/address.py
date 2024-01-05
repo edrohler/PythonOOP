@@ -24,11 +24,14 @@ def create_address_ns(api, uow, version):
         @ns.expect(address_model, validate=True)
         def post(self):
             """Create a new address."""
-            data = api.payload
-            address = Address(**data)
-            uow.address_repository.add(address)
-            uow.commit()
-            return {"message": "Address created"}, 201
+            try:
+                data = api.payload
+                address = Address(**data)
+                uow.address_repository.add(address)
+                uow.commit()
+                return {"message": "Address created"}, 201
+            except Exception as e:
+                return {"message": str(e)}, 400
 
     @ns.route("/<int:id>")
     class AddressResource(Resource):

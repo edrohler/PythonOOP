@@ -21,11 +21,14 @@ def create_email_ns(api, uow, version):
         @ns.expect(email_model, validate=True)
         def post(self):
             """Create a new email."""
-            data = api.payload
-            email = Email(**data)
-            uow.email_repository.add(email)
-            uow.commit()
-            return {"message": "Email created"}, 201
+            try:
+                data = api.payload
+                email = Email(**data)
+                uow.email_repository.add(email)
+                uow.commit()
+                return {"message": "Email created"}, 201
+            except Exception as e:
+                return {"message": str(e)}, 400
         
     @ns.route("/<int:id>")
     class EmailResource(Resource):
