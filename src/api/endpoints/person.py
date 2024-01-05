@@ -1,20 +1,28 @@
-from flask import Blueprint, request
-from flask_restx import Api, Resource, Namespace
+from flask import request
+from flask_restx import Resource, Namespace, fields
 from src.core.domain.viewmodels import Person
 
-def create_person_ns(uow,version):
-    ns = Namespace(f"People Endpoints", description="Person API", path=f"/api/v{version}/people")
+def create_person_model(api):
+    return api.model('Person', {
+        'first_name': fields.String(required=True, description='First name'),
+        'last_name': fields.String(required=True, description='Last name'),
+        'age': fields.Integer(required=True, description='Age')
+    })
 
+def create_person_ns(api,uow,version):
+    ns = Namespace(f"Person Endpoints", description="Person API", path=f"/api/v{version}/person")
+    person_model = create_person_model(api)
     @ns.route("/")
     class PeopleList(Resource):
         def get(self):
-            """Get all people."""
+            """Get all persons."""
             persons = uow.person_repository.get_all()
             return persons
         
+        @ns.expect(person_model, validate=True)
         def post(self):
             """Create a new person."""
-            data = request.json
+            data = api.payload
             person = Person(**data)
             uow.person_repository.add(person)
             uow.commit()

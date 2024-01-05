@@ -30,11 +30,11 @@ api = Api(blueprint, version=api_version, title='API', description='A Simple API
 
 # Add Namespaces
 address_versoin = "1"
-api.add_namespace(create_address_ns(uow, address_versoin))
+api.add_namespace(create_address_ns(api, uow, address_versoin))
 email_verson = "1"
-api.add_namespace(create_email_ns(uow, email_verson))
+api.add_namespace(create_email_ns(api, uow, email_verson))
 person_version = "1"
-api.add_namespace(create_person_ns(uow, person_version))
+api.add_namespace(create_person_ns(api, uow, person_version))
 
 # Register blueprint
 app.register_blueprint(blueprint)

@@ -1,19 +1,30 @@
 from flask import Blueprint, request
-from flask_restx import Api, Resource, Namespace
+from flask_restx import Api, Resource, Namespace, fields
 from src.core.domain.viewmodels import Address
 
-def create_address_ns(uow, version):
+def create_address_model(api):
+    return api.model('Address', {
+        'address_line_1': fields.String(required=True, description='Address line 1'),
+        'address_line_2': fields.String(required=False, description='Address line 2'),
+        'city': fields.String(required=True, description='City'),
+        'state': fields.String(required=True, description='State'),
+        'zipcode': fields.String(required=True, description='Zipcode'),
+        'person_id': fields.Integer(required=True, description='Person ID')
+    })
+
+def create_address_ns(api, uow, version):
     ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/api/v{version}/address")
+    address_model = create_address_model(api)
     @ns.route("/")
     class AddressList(Resource):
         def get(self):
             """Get all addresses."""
             addresses = uow.address_repository.get_all()
             return addresses
-        
+        @ns.expect(address_model, validate=True)
         def post(self):
             """Create a new address."""
-            data = request.json
+            data = api.payload
             address = Address(**data)
             uow.address_repository.add(address)
             uow.commit()

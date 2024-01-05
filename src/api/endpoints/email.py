@@ -1,10 +1,16 @@
-from flask import Blueprint, request
-from flask_restx import Api, Resource, Namespace
+from flask import request
+from flask_restx import Resource, Namespace, fields
 from src.core.domain.viewmodels import Email
 
-def create_email_ns(uow, version):
+def create_email_model(api):
+    return api.model('Email', {
+        'email_address': fields.String(required=True, description='Email address'),
+        'person_id': fields.Integer(required=True, description='Person ID')
+    })
+
+def create_email_ns(api, uow, version):
     ns = Namespace(f"Email Endpoints", description="Email API", path=f"/api/v{version}/email")
-    
+    email_model = create_email_model(api)
     @ns.route("/")
     class EmailList(Resource):
         def get(self):
@@ -12,9 +18,10 @@ def create_email_ns(uow, version):
             emails = uow.email_repository.get_all()
             return emails
         
+        @ns.expect(email_model, validate=True)
         def post(self):
             """Create a new email."""
-            data = request.json
+            data = api.payload
             email = Email(**data)
             uow.email_repository.add(email)
             uow.commit()
