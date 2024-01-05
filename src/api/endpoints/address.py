@@ -44,7 +44,7 @@ def create_address_ns(api, uow, version):
 
         def put(self, id):
             """Update an existing address."""
-            data = request.json
+            data = api.payload
             uow.address_repository.update(id, **data)
             return {"message": "Address updated"}, 200
 

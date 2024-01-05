@@ -41,7 +41,7 @@ def create_email_ns(api, uow, version):
         
         def put(self, id):
             """Update an existing email."""
-            data = request.json
+            data = api.payload
             uow.email_repository.update(id, **data)
             return {"message": "Email updated"}, 200
         

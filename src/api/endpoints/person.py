@@ -42,7 +42,7 @@ def create_person_ns(api,uow,version):
 
         def put(self, id):
             """Update an existing person."""
-            data = request.json
+            data = api.payload
             uow.person_repository.update(id, **data)
             return {"message": "Person updated"}, 200
         
