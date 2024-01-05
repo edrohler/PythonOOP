@@ -9,5 +9,5 @@ class Address(BaseEntity):
     address_line_2 = Column("address_line_2", String(50))
     city = Column("city", String(100))
     state = Column("state", String(2))
-    zipcode = Column("zipcode", String(5))
+    zip_code = Column("zipcode", String(5))
     person_id = Column(Integer, ForeignKey('people.id'))

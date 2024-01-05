@@ -4,9 +4,9 @@ from sqlalchemy.orm import relationship
 
 class Person(BaseEntity):
     __tablename__ = "people"
-    __table_args__ = (UniqueConstraint('firstname', 'lastname'),)
-    firstname = Column(String(50), nullable=False)
-    lastname = Column(String(50), nullable=False)
+    __table_args__ = (UniqueConstraint('first_name', 'last_name'),)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     
     gender = Column(CHAR(1))
     age = Column(Integer)
