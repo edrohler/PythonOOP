@@ -6,7 +6,7 @@ def create_person_model(api):
     return api.model('Person', {
         'first_name': fields.String(required=True, description='First name'),
         'last_name': fields.String(required=True, description='Last name'),
-        'age': fields.Integer(required=True, description='Age')
+        'gender': fields.String(required=True, description='Age', length=1)
     })
 
 def create_person_ns(api,uow,version):
@@ -21,12 +21,15 @@ def create_person_ns(api,uow,version):
         
         @ns.expect(person_model, validate=True)
         def post(self):
-            """Create a new person."""
-            data = api.payload
-            person = Person(**data)
-            uow.person_repository.add(person)
-            uow.commit()
-            return {"message": "Person created"}, 201
+            """Create a new person."""            
+            try:
+                data = api.payload
+                person = Person(**data)
+                uow.person_repository.add(person)
+                uow.commit()
+                return {"message": "Person created"}, 201
+            except Exception as e:
+                return {"message": str(e)}, 400
         
     @ns.route("/<int:id>")
     class PeopleResource(Resource):
