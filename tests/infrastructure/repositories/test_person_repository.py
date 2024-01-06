@@ -9,37 +9,37 @@ def person_repository(test_session, mock_logger):
 
 def test_add_and_retrieve_person(person_repository, test_session):
     # Add a person to the test database
-    new_person = Person(firstname="John", lastname="Doe")
+    new_person = Person(first_name="John", last_name="Doe")
     person_repository.add(new_person)
     test_session.commit()
 
     # Retrieve the person and assert the values
     retrieved_person = person_repository.get_by_id(new_person.id)
     assert retrieved_person is not None
-    assert retrieved_person.firstname == "John"
-    assert retrieved_person.lastname == "Doe"
+    assert retrieved_person.first_name == "John"
+    assert retrieved_person.last_name == "Doe"
     
 def test_update_person(person_repository, test_session):
     # Add a person to the test database
-    person = Person(firstname="Alice", lastname="Johnson")
+    person = Person(first_name="Alice", last_name="Johnson")
     person_repository.add(person)
     test_session.commit()
 
     # Retrieve, update, and commit changes
     retrieved_person = person_repository.get_by_id(person.id)
-    retrieved_person.lastname = "Smith"  # Change the lastname
+    retrieved_person.last_name = "Smith"  # Change the last_name
     person_repository.update()
     test_session.commit()
 
     # Retrieve again and assert the updated values
     updated_person = person_repository.get_by_id(person.id)
     assert updated_person is not None
-    assert updated_person.firstname == "Alice"
-    assert updated_person.lastname == "Smith"
+    assert updated_person.first_name == "Alice"
+    assert updated_person.last_name == "Smith"
     
 
 def test_delete_person(person_repository, test_session):
-    person_to_delete = Person(firstname="Mike", lastname="Smith")
+    person_to_delete = Person(first_name="Mike", last_name="Smith")
     person_repository.add(person_to_delete)
     test_session.commit()
 
@@ -50,27 +50,27 @@ def test_delete_person(person_repository, test_session):
     assert deleted_person is None
 
 def test_add_duplicate_person(person_repository, test_session):
-    person = Person(firstname="Jane", lastname="Doe")
+    person = Person(first_name="Jane", last_name="Doe")
     person_repository.add(person)
     test_session.commit()
 
-    duplicate_person = Person(firstname="Jane", lastname="Doe")
+    duplicate_person = Person(first_name="Jane", last_name="Doe")
     person_repository.add(duplicate_person)
 
     with pytest.raises(Exception):
         test_session.commit()
     test_session.rollback()
     
-def test_add_person_with_null_firstname(person_repository, test_session):
-    person = Person(firstname=None, lastname="Doe")
+def test_add_person_with_null_first_name(person_repository, test_session):
+    person = Person(first_name=None, last_name="Doe")
     person_repository.add(person)
 
     with pytest.raises(Exception):
         test_session.commit()
     test_session.rollback()
     
-def test_add_person_with_null_lastname(person_repository, test_session):
-    person = Person(firstname="Jane", lastname=None)
+def test_add_person_with_null_last_name(person_repository, test_session):
+    person = Person(first_name="Jane", last_name=None)
     person_repository.add(person)
 
     with pytest.raises(Exception):
