@@ -25,7 +25,7 @@ def test_update_address(address_repository, test_session):
 
     retrieved_address = address_repository.get_by_id(address.id)
     retrieved_address.address_line_1 = "456 Main St"
-    address_repository.update()
+    address_repository.update(retrieved_address)
     test_session.commit()
 
     updated_address = address_repository.get_by_id(address.id)

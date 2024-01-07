@@ -22,7 +22,7 @@ def test_update_email(email_repository, test_session):
     
     retrieved_email = email_repository.get_by_id(email.id)
     retrieved_email.email_address = "test2@nomail.com"
-    email_repository.update()
+    email_repository.update(retrieved_email)
     test_session.commit()
     
     updated_email = email_repository.get_by_id(email.id)

@@ -28,7 +28,7 @@ def test_update_person(person_repository, test_session):
     # Retrieve, update, and commit changes
     retrieved_person = person_repository.get_by_id(person.id)
     retrieved_person.last_name = "Smith"  # Change the last_name
-    person_repository.update()
+    person_repository.update(retrieved_person)
     test_session.commit()
 
     # Retrieve again and assert the updated values
