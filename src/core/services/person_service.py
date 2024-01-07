@@ -25,8 +25,8 @@ class PersonService:
 
     def update_person(self, person: PersonVM):
         person_orm = self._map_to_orm(person)
-        self.uow.person_repository.update(person_orm)
-        self.uow.commit()
+        updated_person = self.uow.person_repository.update(person_orm)
+        return updated_person
 
     def delete_person(self, id: int):
         person_orm = self.uow.person_repository.get_by_id(id)
