@@ -30,8 +30,10 @@ class PersonService:
 
     def delete_person(self, id: int):
         person_orm = self.uow.person_repository.get_by_id(id)
-        self.uow.person_repository.delete(person_orm)
+        deleted_person = self.uow.person_repository.delete(person_orm)
         self.uow.commit()
+        return deleted_person
+        
 
     def _map_to_orm(self, person: PersonVM) -> PersonORM:
         # Perform the mapping logic here

@@ -55,7 +55,12 @@ def create_person_ns(api,uow: UnitOfWork,version, logger: LoggingService):
         
         def delete(self, id):
             """Delete a person."""
-            person_service.delete_person(id)
-            return {"message": f"Person with id: {id} deleted"}, 200
+            try:
+                deleted_person = person_service.delete_person(id)
+                if deleted_person is None:
+                    return {"message": "Person not found"}, 404
+                return {"message": f"Person with id: {id} deleted"}, 200
+            except Exception as e:
+                return {"message": str(e)}, 400
             
     return ns

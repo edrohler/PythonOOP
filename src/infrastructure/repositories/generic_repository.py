@@ -23,23 +23,29 @@ class GenericRepository:
         return self.session.query(self.model).all()
 
     def delete(self, entity):
-        self.session.delete(entity)
-        self.logger.log_info(f'Deleted entity of type {type(entity).__name__} from session')
+        entity_to_delete = self.get_by_id(entity.id)
+        if entity_to_delete:
+            try:
+                self.session.delete(entity)
+                self.logger.log_info(f'Deleted entity of type {type(entity).__name__} from session')
+                return entity
+            except Exception as e:
+                self.session.rollback()
+                self.logger.log_error(f'Error deleting entity: {e}')
+                raise
+        else:
+            self.logger.log_info(f'Entity with ID {entity.id} not found')
 
     def update(self, entity):
         # Get the existing entity from the database
-        entity_to_update = self.session.query(self.model).filter_by(id=entity.id).one_or_none()
+        entity_to_update = self.get_by_id(entity.id)
 
         if entity_to_update:
-            # Update the attributes of the existing entity
-            for attr, value in vars(entity).items():
-                setattr(entity_to_update, attr, value)
-
-            # Commit the changes
             try:
-                self.session.flush()  # Flush the changes
+                self.session.merge(entity)
                 self.session.commit()
                 self.logger.log_info(f'Updated entity with ID {entity.id}')
+                return entity
             except Exception as e:
                 self.session.rollback()
                 self.logger.log_error(f'Error updating entity: {e}')
