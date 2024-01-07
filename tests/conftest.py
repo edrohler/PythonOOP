@@ -3,6 +3,7 @@ import pytest
 
 from src.core.services.logging_service import LoggingService
 from src.infrastructure.database import DatabaseConfig
+from src.infrastructure.unit_of_work import UnitOfWork
 
 @pytest.fixture
 def mock_file_handler(mocker):
@@ -19,7 +20,7 @@ def mock_database_config(mock_logger):
     return DatabaseConfig('sqlite:///:memory:', echo=False, logger=mock_logger)
 
 @pytest.fixture
-def test_database_config(mocker, mock_database_config):
+def test_database_config(mock_database_config):
     # Setup a test database configuration
     test_config = mock_database_config
     test_config.init_db()
@@ -29,3 +30,7 @@ def test_database_config(mocker, mock_database_config):
 def test_session(test_database_config):
     # Create a new session for testing
     return test_database_config.get_session()
+
+@pytest.fixture
+def mock_unit_of_work(test_database_config, mock_logger):
+    return UnitOfWork.get_instance(test_database_config, mock_logger)
