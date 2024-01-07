@@ -42,14 +42,17 @@ class AddressService:
         address_orm.city = address.city
         address_orm.state = address.state
         address_orm.zip_code = address.zip_code
+        address_orm.person_id = address.person_id
         return address_orm
     
     def _map_to_vm(self, address: AddressORM) -> AddressVM:
         address_vm = AddressVM(
             address.id
-            , address.street
+            , address.address_line_1
+            , address.address_line_2
             , address.city
             , address.state
             , address.zip_code
+            , address.person_id
         )
         return address_vm

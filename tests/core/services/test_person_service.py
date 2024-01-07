@@ -1,5 +1,3 @@
-import pytest
-from pytest_mock import mocker
 from src.core.services.person_service import PersonService
 from src.core.domain.models.person import Person
 
