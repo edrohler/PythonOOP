@@ -1,6 +1,5 @@
 from src.core.domain.models.person import Person as PersonVM
 from src.infrastructure.orm.entities import Person as PersonORM
-from src.infrastructure.repositories.person_repository import PersonRepository
 from src.infrastructure.unit_of_work import UnitOfWork
 
 class PersonService:

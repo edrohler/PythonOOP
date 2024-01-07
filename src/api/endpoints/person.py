@@ -41,7 +41,8 @@ def create_person_ns(api,uow: UnitOfWork,version, logger: LoggingService):
                     return {"message": "Error updating person"}, 400
                 return {"message": "Person updated"}, 200
             except Exception as e:
-                return {"message": str(e)}, 400
+                logger.log_error(e)
+                return {"message": "Error updating person"}, 400
 
     @ns.route("/<int:id>")
     class PeopleResource(Resource):
@@ -61,6 +62,7 @@ def create_person_ns(api,uow: UnitOfWork,version, logger: LoggingService):
                     return {"message": "Person not found"}, 404
                 return {"message": f"Person with id: {id} deleted"}, 200
             except Exception as e:
-                return {"message": str(e)}, 400
+                logger.log_error(e)
+                return {"message": "Error delting person"}, 400
             
     return ns
