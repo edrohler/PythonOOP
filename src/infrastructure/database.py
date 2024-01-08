@@ -1,5 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import datetime
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker, Session
 
 from src.core.services.logging_service import LoggingService
 from .orm.entities import BaseEntity
@@ -8,7 +9,7 @@ class DatabaseConfig:
     _instance = None  # Class attribute to hold the singleton instance
 
     @classmethod
-    def get_instance(cls, database_uri='sqlite:///database.db', echo=False, logger: LoggingService = None):
+    def get_instance(cls, database_uri="sqlite:///database.db", echo=False, logger: LoggingService = None):
         """ Class method to get the singleton instance of the class. """
         if cls._instance is None:
             cls._instance = cls(database_uri, echo, logger)
@@ -25,20 +26,20 @@ class DatabaseConfig:
     def init_engine(self):
         self.engine = create_engine(self.database_uri, echo=self.echo)
         self.Session = sessionmaker(bind=self.engine)
-        self.logger.log_info(f'Initialized database engine with URI {self.database_uri}')
+        self.logger.log_info(f"Initialized database engine with URI {self.database_uri}")
 
     def init_db(self):
         """ Initialize the database (create tables based on models) """
         if not self.engine:
             self.init_engine()
         BaseEntity.metadata.create_all(self.engine)
-        self.logger.log_info('Initialized database')
+        self.logger.log_info("Initialized database")
 
     def get_session(self):
         """ Returns a new session instance from the session factory """
         if not self.Session:
             self.init_engine()
-        self.logger.log_info('Created new session')
+        self.logger.log_info("Created new session")
         return self.Session()
 
 def init_db(config):
@@ -46,3 +47,14 @@ def init_db(config):
 
 def get_session(config):
     return config.get_session()
+
+def before_insert_listener(mapper, connection, target):
+    target.created_at = datetime.utcnow()
+    target.created_by = connection.info.get("user", "system")
+    
+def before_update_listener(mapper, connection, target):
+    target.updated_at = datetime.utcnow()
+    target.updated_by = connection.info.get("user", "system")
+    
+event.listen(Session, "before_insert", before_insert_listener)
+event.listen(Session, "before_update", before_update_listener)
