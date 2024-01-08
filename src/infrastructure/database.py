@@ -26,6 +26,7 @@ class DatabaseConfig:
     def init_engine(self):
         self.engine = create_engine(self.database_uri, echo=self.echo)
         self.Session = sessionmaker(bind=self.engine)
+        # self.register_listeners()
         self.logger.log_info(f"Initialized database engine with URI {self.database_uri}")
 
     def init_db(self):
@@ -41,20 +42,27 @@ class DatabaseConfig:
             self.init_engine()
         self.logger.log_info("Created new session")
         return self.Session()
+        
+    # def register_listeners(self):
+    #     self.logger.log_info("Registering event listeners")
+    #     event.listen(BaseEntity, 'before_insert', self.before_insert_listener)
+    #     self.logger.log_info("Registered before_insert listener")
+    #     event.listen(BaseEntity, 'before_update', self.before_update_listener)
+    #     self.logger.log_info("Registered before_update listener")
+    
+    # def before_insert_listener(self, connection, target):
+    #     self.logger.log_info("before_insert_listener")
+    #     target.created_at = datetime.utcnow()
+    #     target.created_by = connection.info.get("user", "system")
+
+    # def before_update_listener(self, connection, target):
+    #     self.logger.log_info("before_update_listener")
+    #     target.updated_at = datetime.utcnow()
+    #     target.updated_by = connection.info.get("user", "system")
 
 def init_db(config):
     config.init_db()
 
 def get_session(config):
     return config.get_session()
-
-def before_insert_listener(mapper, connection, target):
-    target.created_at = datetime.utcnow()
-    target.created_by = connection.info.get("user", "system")
     
-def before_update_listener(mapper, connection, target):
-    target.updated_at = datetime.utcnow()
-    target.updated_by = connection.info.get("user", "system")
-    
-event.listen(Session, "before_insert", before_insert_listener)
-event.listen(Session, "before_update", before_update_listener)
