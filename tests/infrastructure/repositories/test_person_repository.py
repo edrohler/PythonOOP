@@ -10,7 +10,7 @@ def person_repository(test_session, mock_logger):
 
 def test_add_and_retrieve_person(person_repository, test_session):
     # Add a person to the test database
-    new_person = Person(first_name="John", last_name="Doe", created_by="test", created_at=datetime.utcnow())
+    new_person = Person(first_name="John", last_name="Doe")
     person_repository.add(new_person)
     test_session.commit()
 
@@ -19,12 +19,12 @@ def test_add_and_retrieve_person(person_repository, test_session):
     assert retrieved_person is not None
     assert retrieved_person.first_name == "John"
     assert retrieved_person.last_name == "Doe"
-    assert retrieved_person.created_by == "test"
+    assert retrieved_person.created_by == "system"
     assert retrieved_person.created_at is not None
     
 def test_update_person(person_repository, test_session):
     # Add a person to the test database
-    person = Person(first_name="Alice", last_name="Johnson", created_by="test", created_at=datetime.utcnow())
+    person = Person(first_name="Alice", last_name="Johnson")
     person_repository.add(person)
     test_session.commit()
 
@@ -39,8 +39,10 @@ def test_update_person(person_repository, test_session):
     assert updated_person is not None
     assert updated_person.first_name == "Alice"
     assert updated_person.last_name == "Smith"
-    assert updated_person.created_by == "test"
+    assert updated_person.created_by == "system"
     assert updated_person.created_at is not None
+    assert updated_person.updated_by == "system"
+    assert updated_person.updated_at is not None
     
 
 def test_delete_person(person_repository, test_session):
@@ -55,11 +57,11 @@ def test_delete_person(person_repository, test_session):
     assert deleted_person is None
 
 def test_add_duplicate_person(person_repository, test_session):
-    person = Person(first_name="Jane", last_name="Doe", created_by="test", created_at=datetime.utcnow())
+    person = Person(first_name="Jane", last_name="Doe")
     person_repository.add(person)
     test_session.commit()
 
-    duplicate_person = Person(first_name="Jane", last_name="Doe", created_by="test", created_at=datetime.utcnow())
+    duplicate_person = Person(first_name="Jane", last_name="Doe")
     person_repository.add(duplicate_person)
 
     with pytest.raises(Exception):

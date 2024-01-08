@@ -8,7 +8,7 @@ def email_repository(test_session, mock_logger):
     return GenericRepository(test_session, Email, mock_logger)
 
 def test_add_and_retrieve_email(email_repository, test_session):
-    new_email = Email(email_address="test1@nomail.com", person_id=1, created_by="test", created_at=datetime.utcnow())
+    new_email = Email(email_address="test1@nomail.com", person_id=1, created_by="test")
     email_repository.add(new_email)
     test_session.commit()
     
@@ -16,11 +16,11 @@ def test_add_and_retrieve_email(email_repository, test_session):
     assert retrieved_email is not None
     assert retrieved_email.email_address == "test1@nomail.com"
     assert retrieved_email.person_id == 1
-    assert retrieved_email.created_by == "test"
+    assert retrieved_email.created_by == "system"
     assert retrieved_email.created_at is not None
     
 def test_update_email(email_repository, test_session):
-    email = Email(email_address="test1@nomail.com", person_id=1, created_by="test", created_at=datetime.utcnow(), updated_by="test", updated_at=datetime.utcnow()+timedelta(days=1))
+    email = Email(email_address="test1@nomail.com", person_id=1)
     email_repository.add(email)
     test_session.commit()
     
@@ -33,9 +33,9 @@ def test_update_email(email_repository, test_session):
     assert updated_email is not None
     assert updated_email.email_address == "test2@nomail.com"
     assert updated_email.person_id == 1
-    assert updated_email.created_by == "test"
+    assert updated_email.created_by == "system"
     assert updated_email.created_at is not None
-    assert updated_email.updated_by == "test"
+    assert updated_email.updated_by == "system"
     assert updated_email.updated_at is not None
     
 def test_delete_email(email_repository, test_session):
