@@ -12,7 +12,7 @@ class LoggingService:
 
     def __init__(self, logger_name, log_level, handler):
         """ Constructor is made private to prevent direct instantiation. """
-        if not hasattr(self, 'initialized'):  # Avoid re-initialization
+        if not hasattr(self, "initialized"):  # Avoid re-initialization
             self.logger = logging.getLogger(logger_name)
             self.logger.propagate = False
             self.logger.setLevel(log_level)
@@ -23,14 +23,14 @@ class LoggingService:
 
             # Add new handler
             if handler is None:
-                handler = logging.FileHandler(f'logs/{logger_name}.log')
+                handler = logging.FileHandler(f"logs/{logger_name}.log")
 
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
 
             self.initialized = True
-            self.logger.info('LoggingService initialized')
+            self.logger.info("LoggingService initialized")
 
     def log_info(self, message):
         self.logger.info(message)

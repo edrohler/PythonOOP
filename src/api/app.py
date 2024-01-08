@@ -25,8 +25,8 @@ app = Flask(__name__)
 api_version = "1"
 
 # Create blueprint
-blueprint = Blueprint('api', __name__)
-api = Api(blueprint, version=api_version, title='API', description='A Simple API')
+blueprint = Blueprint("api", __name__)
+api = Api(blueprint, version=api_version, title="API", description="A Simple API")
 
 # Add Namespaces
 address_version = "1"

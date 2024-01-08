@@ -1,7 +1,7 @@
 import argparse
 
 import sys
-sys.path.append('.')
+sys.path.append(".")
 
 from api.app import app
 
