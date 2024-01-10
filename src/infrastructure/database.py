@@ -53,14 +53,13 @@ class DatabaseConfig:
                 self.logger.log_info(f"Registered before_insert listener for {cls.__name__}")
                 event.listen(mapped_class, 'before_update', self.before_update_listener)
                 self.logger.log_info(f"Registered before_update listener for {cls.__name__}")
+
     @staticmethod
     def before_insert_listener(mapper, connection, target):
         target.created_at = datetime.utcnow()
-        target.created_by = connection.info.get("user", "system")
+        target.created_by = "system" # TODO: Get user from session
     @staticmethod
     def before_update_listener(mapper, connection, target):
         target.updated_at = datetime.utcnow()
-        target.updated_by = connection.info.get("user", "system")
-
-
+        target.updated_by = "system" # TODO: Get user from session
     
