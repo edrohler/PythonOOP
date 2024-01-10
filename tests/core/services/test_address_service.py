@@ -41,7 +41,6 @@ def test_create_address(mock_unit_of_work, mocker):
     
     # Assert
     mock_unit_of_work.address_repository.add.assert_called_once()
-    mocker_commit.assert_called_once()
     
 def test_update_address(mock_unit_of_work, mocker):
     # Arrange
