@@ -61,9 +61,5 @@ class DatabaseConfig:
         target.updated_at = datetime.utcnow()
         target.updated_by = connection.info.get("user", "system")
 
-def init_db(config):
-    config.init_db()
 
-def get_session(config):
-    return config.get_session()
     
