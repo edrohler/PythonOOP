@@ -42,7 +42,6 @@ def test_create_person(mock_unit_of_work, mocker):
 
     # Assert
     mock_unit_of_work.person_repository.add.assert_called_once()
-    mocker_commit.assert_called_once()
 
 def test_update_person(mock_unit_of_work, mocker):
     # Arrange
@@ -70,4 +69,3 @@ def test_delete_person(mock_unit_of_work, mocker):
 
     # Assert
     mock_unit_of_work.person_repository.delete.assert_called_once()
-    mocker_commit.assert_called_once()

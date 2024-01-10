@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 import pytest
 from src.infrastructure.repositories.generic_repository import GenericRepository
 from src.infrastructure.orm.entities.person import Person
@@ -59,27 +60,19 @@ def test_delete_person(person_repository, test_session):
 def test_add_duplicate_person(person_repository, test_session):
     person = Person(first_name="Jane", last_name="Doe")
     person_repository.add(person)
-    test_session.commit()
 
     duplicate_person = Person(first_name="Jane", last_name="Doe")
-    person_repository.add(duplicate_person)
-
-    with pytest.raises(Exception):
-        test_session.commit()
-    test_session.rollback()
+    with pytest.raises(IntegrityError):
+        person_repository.add(duplicate_person)
     
 def test_add_person_with_null_first_name(person_repository, test_session):
     person = Person(first_name=None, last_name="Doe")
-    person_repository.add(person)
-
-    with pytest.raises(Exception):
-        test_session.commit()
-    test_session.rollback()
+    
+    with pytest.raises(IntegrityError):
+        person_repository.add(person)
     
 def test_add_person_with_null_last_name(person_repository, test_session):
     person = Person(first_name="Jane", last_name=None)
-    person_repository.add(person)
-
-    with pytest.raises(Exception):
-        test_session.commit()
-    test_session.rollback()
+    
+    with pytest.raises(IntegrityError):
+        person_repository.add(person)
