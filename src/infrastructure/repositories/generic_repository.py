@@ -8,6 +8,7 @@ class GenericRepository:
 
     def add(self, entity):
         self.session.add(entity)
+        self.session.commit()
         self.logger.log_info(f'Added entity of type {type(entity).__name__} to session')
 
     def get_by_id(self, id):
@@ -27,6 +28,7 @@ class GenericRepository:
         if entity_to_delete:
             try:
                 self.session.delete(entity)
+                self.session.commit()
                 self.logger.log_info(f'Deleted entity of type {type(entity).__name__} from session')
                 return entity
             except Exception as e:

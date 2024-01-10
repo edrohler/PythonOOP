@@ -20,7 +20,6 @@ class EmailService:
         email_orm = self._map_to_orm(email)
         email_orm.id = None
         self.uow.email_repository.add(email_orm)
-        self.uow.commit()
 
     def update_email(self, email: EmailVM):
         email_orm = self._map_to_orm(email)
@@ -30,7 +29,6 @@ class EmailService:
     def delete_email(self, id: int):
         email_orm = self.uow.email_repository.get_by_id(id)
         deleted_email = self.uow.email_repository.delete(email_orm)
-        self.uow.commit()
         return deleted_email
         
     def _map_to_orm(self, email: EmailVM) -> EmailORM:
