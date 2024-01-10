@@ -26,7 +26,6 @@ class DatabaseConfig:
     def init_engine(self):
         self.engine = create_engine(self.database_uri, echo=self.echo)
         self.Session = sessionmaker(bind=self.engine)
-        self.register_listeners()
         self.logger.log_info(f"Initialized database engine with URI {self.database_uri}")
 
     def init_db(self):
@@ -40,7 +39,7 @@ class DatabaseConfig:
         """ Returns a new session instance from the session factory """
         if not self.Session:
             self.init_engine()
-        self.logger.log_info("Created new session")
+        self.register_listeners()
         return self.Session()
         
     def register_listeners(self):
