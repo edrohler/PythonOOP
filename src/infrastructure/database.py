@@ -38,8 +38,10 @@ class DatabaseConfig:
     def get_session(self):
         """ Returns a new session instance from the session factory """
         if not self.Session:
+            self.logger.log_info("No session available. Initializing")
             self.init_engine()
         self.register_listeners()
+        self.logger.log_info("Returning session")
         return self.Session()
         
     def register_listeners(self):
