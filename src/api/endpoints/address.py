@@ -25,7 +25,8 @@ def create_address_ns(api, uow: UnitOfWork, version, logger: LoggingService):
                 address_service.create_address(address)
                 return {"message": "Address created"}, 201
             except Exception as e:
-                return {"message": str(e)}, 400
+                logger.log_error(e)
+                return {"message": "An Error Occurred"}, 400
         
         @ns.expect(address_model, validate=True)
         def put(self):
@@ -49,7 +50,7 @@ def create_address_ns(api, uow: UnitOfWork, version, logger: LoggingService):
             address = address_service.get_address_by_id(id)
             if address is None:
                 return {"message": "Address not found"}, 404
-            return address
+            return AddressSchema().dump(address)
 
 
         def delete(self, id):
@@ -58,7 +59,7 @@ def create_address_ns(api, uow: UnitOfWork, version, logger: LoggingService):
                 deleted_address = address_service.delete_address(id)
                 if deleted_address is None:
                     return {"message": "Address not found"}, 404
-                return {"message": "Address deleted"}, 200
+                return {"message": f"Address with id: {id} deleted"}, 200
             except Exception as e:
                 logger.log_error(e)
                 return {"message": "Error deleting address"}, 400
