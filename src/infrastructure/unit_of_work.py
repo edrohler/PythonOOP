@@ -21,11 +21,11 @@ class UnitOfWork:
             return
         self.__initialized = True
         self.logger = logger
-        logger.log_info('Initializing unit of work')
         self.session = config.get_session()
         self.address_repository = AddressRepository(self.session, logger=config.logger)
         self.email_repository = EmailRepository(self.session, logger=config.logger)
         self.person_repository = PersonRepository(self.session, logger=config.logger)
+        logger.log_info('Initialized unit of work')
         
     def commit(self):
         self.session.commit()
