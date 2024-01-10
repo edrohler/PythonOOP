@@ -8,6 +8,6 @@ class BaseEntity(Base):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-    created_by = Column(String, nullable=False)
+    created_by = Column(String, nullable=False, default="system")
     updated_at = Column(DateTime, onupdate=datetime.datetime.utcnow, nullable=True)
-    updated_by = Column(String, nullable=True)
+    updated_by = Column(String, nullable=True, default="system")
