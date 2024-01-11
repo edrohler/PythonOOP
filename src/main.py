@@ -12,10 +12,10 @@ def main():
 
     args = parser.parse_args()
 
-    if args.serve:
-        app.run(debug=False, use_reloader=False)
-    elif args.serve and args.debug:
+    if args.serve and args.debug:
         app.run(debug=True, use_reloader=True)
+    elif args.serve:
+        app.run(debug=False, use_reloader=False)
 
 if __name__ == "__main__":
     main()
