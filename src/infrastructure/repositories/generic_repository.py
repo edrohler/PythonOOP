@@ -37,6 +37,7 @@ class GenericRepository:
                 raise
         else:
             self.logger.log_info(f'Entity with ID {entity.id} not found')
+            raise ValueError(f'Entity with ID {entity.id} not found')
 
     def update(self, entity):
         # Get the existing entity from the database
@@ -54,3 +55,4 @@ class GenericRepository:
                 raise
         else:
             self.logger.log_info(f'Entity with ID {entity.id} not found')
+            raise ValueError(f'Entity with ID {entity.id} not found')
