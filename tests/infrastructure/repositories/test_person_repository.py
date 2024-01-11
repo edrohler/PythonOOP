@@ -61,6 +61,14 @@ def test_update_person(person_repository, test_session):
     assert updated_person.updated_by == "system"
     assert updated_person.updated_at is not None
     
+def test_update_nonexistent_person(person_repository):
+    # Create a Person object without adding it to the database
+    nonexistent_person = Person(first_name="Nonexistent", last_name="Person")
+
+    # Attempt to update the nonexistent person should raise an exception
+    with pytest.raises(ValueError):
+        person_repository.update(nonexistent_person)
+    
 
 def test_delete_person(person_repository, test_session):
     person_to_delete = Person(first_name="Mike", last_name="Smith", created_by="test", created_at=datetime.utcnow())

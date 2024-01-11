@@ -52,6 +52,11 @@ def test_update_email(email_repository, test_session):
     assert updated_email.updated_by == "system"
     assert updated_email.updated_at is not None
     
+def test_update_email_with_nonexistent_email(email_repository):
+    email = Email(email_address="nomail@nomail.com", person_id=1)
+    with pytest.raises(ValueError):
+        email_repository.update(email)
+    
 def test_delete_email(email_repository, test_session):
     email_to_delete = Email(email_address="test1@nomail.com", person_id=1, created_by="test", created_at=datetime.utcnow())
     email_repository.add(email_to_delete)
@@ -63,5 +68,9 @@ def test_delete_email(email_repository, test_session):
     deleted_email = email_repository.get_by_id(email_to_delete.id)
     assert deleted_email is None
     
+def test_delete_email_with_nonexistent_email(email_repository):
+    email = Email(email_address="nomail@nomail", person_id=1, created_by="test", created_at=datetime.utcnow())
+    with pytest.raises(ValueError):
+        email_repository.delete(email)    
     
     

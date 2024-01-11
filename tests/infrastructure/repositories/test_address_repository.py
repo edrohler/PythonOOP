@@ -56,6 +56,11 @@ def test_update_address(address_repository, test_session):
     assert updated_address.updated_at is not None
     assert updated_address.updated_by == "system"
     
+def test_update_address_with_nonexistent_address(address_repository, test_session):
+        address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1)
+        with pytest.raises(ValueError):
+            address_repository.update(address)    
+    
 def test_delete_address(address_repository, test_session):
     address_to_delete = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1, created_by="test", created_at=datetime.utcnow())
     address_repository.add(address_to_delete)
@@ -66,3 +71,8 @@ def test_delete_address(address_repository, test_session):
 
     deleted_address = address_repository.get_by_id(address_to_delete.id)
     assert deleted_address is None
+    
+def test_delete_nonexistent_address(address_repository):
+    address_to_delete = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1, created_by="test", created_at=datetime.utcnow())
+    with pytest.raises(ValueError):
+        address_repository.delete(address_to_delete)
