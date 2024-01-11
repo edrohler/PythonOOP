@@ -32,7 +32,6 @@ def test_get_all_people(mock_unit_of_work, mocker):
 def test_create_person(mock_unit_of_work, mocker):
     # Arrange
     person_service = PersonService(mock_unit_of_work)
-    mocker_commit = mocker.patch.object(mock_unit_of_work, 'commit')
     person = Person(id=1, first_name='John', last_name='Doe', gender='Male', age=30)
     mocker_add = mocker.patch.object(mock_unit_of_work.person_repository, 'add')
     mocker_add.return_value = None
@@ -59,7 +58,6 @@ def test_update_person(mock_unit_of_work, mocker):
 def test_delete_person(mock_unit_of_work, mocker):
     # Arrange
     person_service = PersonService(mock_unit_of_work)
-    mocker_commit = mocker.patch.object(mock_unit_of_work, 'commit')
     person_id = 1
     mock_delete = mocker.patch.object(mock_unit_of_work.person_repository, 'delete')
     mock_delete.return_value = None

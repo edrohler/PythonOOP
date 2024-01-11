@@ -7,6 +7,19 @@ from src.infrastructure.orm.entities.address import Address
 def address_repository(test_session, mock_logger):
     return GenericRepository(test_session, Address, mock_logger)
 
+@pytest.fixture
+def test_addresses(test_session, mock_logger):
+    address_repository = GenericRepository(test_session, Address, mock_logger)
+    address_repository.add(Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1))
+    address_repository.add(Address(address_line_1="456 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1))
+    address_repository.add(Address(address_line_1="789 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1))
+    address_repository.add(Address(address_line_1="101112 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1))
+    return address_repository
+
+def test_get_all_addresses(test_addresses):
+    addresses = test_addresses.get_all()
+    assert len(addresses) == 4
+
 def test_add_and_retrieve_address(address_repository, test_session):
     created_at = datetime.utcnow()
     new_address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1)

@@ -7,6 +7,20 @@ from src.infrastructure.orm.entities.email import Email
 def email_repository(test_session, mock_logger):
     return GenericRepository(test_session, Email, mock_logger)
 
+@pytest.fixture
+def test_emails(test_session, mock_logger):
+    email_repository = GenericRepository(test_session, Email, mock_logger)
+    email_repository.add(Email(email_address="naomail1@nomail.com", person_id=1))
+    email_repository.add(Email(email_address="naomail2@nomail.com", person_id=1))
+    email_repository.add(Email(email_address="naomail3@nomail.com", person_id=1))
+    email_repository.add(Email(email_address="naomail4@nomail.com", person_id=1))
+    return email_repository
+
+def test_get_all_emails(test_emails):
+    emails = test_emails.get_all()
+    assert len(emails) == 4
+    
+
 def test_add_and_retrieve_email(email_repository, test_session):
     new_email = Email(email_address="test1@nomail.com", person_id=1, created_by="test")
     email_repository.add(new_email)
