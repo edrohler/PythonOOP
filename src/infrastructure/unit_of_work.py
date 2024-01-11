@@ -26,10 +26,6 @@ class UnitOfWork:
         self.email_repository = EmailRepository(self.session, logger=config.logger)
         self.person_repository = PersonRepository(self.session, logger=config.logger)
         logger.log_info('Initialized unit of work')
-        
-    def commit(self):
-        self.session.commit()
-        self.logger.log_info('Committed session')
 
     def __enter__(self):
         self.logger.log_info('Entering unit of work')
