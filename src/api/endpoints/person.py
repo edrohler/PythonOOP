@@ -63,6 +63,6 @@ def create_person_ns(api,uow: UnitOfWork,version, logger: LoggingService):
                 return {"message": f"Person with id: {id} deleted"}, 200
             except Exception as e:
                 logger.log_error(e)
-                return {"message": "Error delting person"}, 400
+                return {"message": "Error deleting person"}, 400
             
     return ns
