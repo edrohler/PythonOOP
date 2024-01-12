@@ -149,14 +149,14 @@ def test_get_person_by_id(client, mocker, mock_unit_of_work, mock_logger):
     assert response.json["id"] == 1
     ...
     
-def test_get_person_by_id_with_exception(mocker, mock_unit_of_work, mock_logger, client):
+def test_get_person_by_id_with_not_found(mocker, mock_unit_of_work, mock_logger, client):
     #Arrange
     from src.api.app import app
     app.config["SERVER_NAME"] = "localhost:5000"
     app.config["APPLICATION_ROOT"] = "/"
     app.config["PREFERRED_URL_SCHEME"] = "http"
     mock_get_person_by_id = mocker.patch("src.api.endpoints.person.PersonService.get_person_by_id")
-    mock_get_person_by_id.return_value = {"message": "Person not found"}
+    mock_get_person_by_id.return_value = None
     
     #Act
     with app.app_context():
@@ -164,7 +164,7 @@ def test_get_person_by_id_with_exception(mocker, mock_unit_of_work, mock_logger,
         response = client.get(url_for("api.Person Endpoints_people_resource", id=999))
         
     #Assert
-    assert response.status_code == 200
+    assert response.status_code == 404
     assert response.json["message"] == "Person not found"
 
 def test_delete_person(client, mocker, mock_unit_of_work, mock_logger):
