@@ -57,10 +57,18 @@ def test_update_address(address_repository, test_session):
     assert updated_address.updated_by == "system"
     
 def test_update_address_with_nonexistent_address(address_repository, test_session):
-        address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1)
-        with pytest.raises(ValueError):
-            address_repository.update(address)    
+    address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1)
+    with pytest.raises(ValueError):
+        address_repository.update(address)    
+            
+def test_update_address_raises_exception(address_repository, mocker):
+    address = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1)
+    address_repository.add(address)
+    mocker.patch.object(address_repository.session, 'merge', side_effect=Exception('Test Exception'))
     
+    with pytest.raises(Exception):
+        address_repository.update(address)
+
 def test_delete_address(address_repository, test_session):
     address_to_delete = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1, created_by="test", created_at=datetime.utcnow())
     address_repository.add(address_to_delete)
@@ -71,8 +79,17 @@ def test_delete_address(address_repository, test_session):
 
     deleted_address = address_repository.get_by_id(address_to_delete.id)
     assert deleted_address is None
-    
+
 def test_delete_nonexistent_address(address_repository):
     address_to_delete = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1, created_by="test", created_at=datetime.utcnow())
     with pytest.raises(ValueError):
         address_repository.delete(address_to_delete)
+
+def test_delete_address_raises_exception(address_repository, mocker):
+    address_to_delete = Address(address_line_1="123 Main St", city="Anytown", state="NY", zip_code="12345", person_id=1, created_by="test", created_at=datetime.utcnow())
+    address_repository.add(address_to_delete)
+    mocker.patch.object(address_repository.session, 'delete', side_effect=Exception('Test Exception'))
+    
+    with pytest.raises(Exception):
+        address_repository.delete(address_to_delete)
+  

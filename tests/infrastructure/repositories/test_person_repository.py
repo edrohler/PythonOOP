@@ -39,6 +39,26 @@ def test_add_and_retrieve_person(person_repository, test_session):
     assert retrieved_person.created_by == "system"
     assert retrieved_person.created_at is not None
     
+def test_add_duplicate_person(person_repository):
+    person = Person(first_name="Jane", last_name="Doe")
+    person_repository.add(person)
+
+    duplicate_person = Person(first_name="Jane", last_name="Doe")
+    with pytest.raises(IntegrityError):
+        person_repository.add(duplicate_person)
+    
+def test_add_person_with_null_first_name(person_repository):
+    person = Person(first_name=None, last_name="Doe")
+    
+    with pytest.raises(IntegrityError):
+        person_repository.add(person)
+    
+def test_add_person_with_null_last_name(person_repository):
+    person = Person(first_name="Jane", last_name=None)
+    
+    with pytest.raises(IntegrityError):
+        person_repository.add(person)
+
 def test_update_person(person_repository, test_session):
     # Add a person to the test database
     person = Person(first_name="Alice", last_name="Johnson")
@@ -69,6 +89,14 @@ def test_update_nonexistent_person(person_repository):
     with pytest.raises(ValueError):
         person_repository.update(nonexistent_person)
     
+def test_update_person_raises_exception(person_repository, mocker):
+    # Create a Person object without adding it to the database
+    person = Person(first_name="Alice", last_name="Johnson")
+    person_repository.add(person)
+    mocker.patch.object(person_repository.session, 'merge', side_effect=Exception('Test Exception'))
+    
+    with pytest.raises(Exception):
+        person_repository.update(person)
 
 def test_delete_person(person_repository, test_session):
     person_to_delete = Person(first_name="Mike", last_name="Smith", created_by="test", created_at=datetime.utcnow())
@@ -88,23 +116,13 @@ def test_delete_nonexistent_person(person_repository):
     # Attempt to delete the nonexistent person should raise an exception
     with pytest.raises(ValueError):
         person_repository.delete(nonexistent_person)
+        
+def test_delete_person_raises_exception(person_repository, mocker):
+    # Create a Person object without adding it to the database
+    person_to_delete = Person(first_name="Mike", last_name="Smith", created_by="test", created_at=datetime.utcnow())
+    person_repository.add(person_to_delete)
+    mocker.patch.object(person_repository.session, 'delete', side_effect=Exception('Test Exception'))
+    
+    with pytest.raises(Exception):
+        person_repository.delete(person_to_delete)
 
-def test_add_duplicate_person(person_repository):
-    person = Person(first_name="Jane", last_name="Doe")
-    person_repository.add(person)
-
-    duplicate_person = Person(first_name="Jane", last_name="Doe")
-    with pytest.raises(IntegrityError):
-        person_repository.add(duplicate_person)
-    
-def test_add_person_with_null_first_name(person_repository):
-    person = Person(first_name=None, last_name="Doe")
-    
-    with pytest.raises(IntegrityError):
-        person_repository.add(person)
-    
-def test_add_person_with_null_last_name(person_repository):
-    person = Person(first_name="Jane", last_name=None)
-    
-    with pytest.raises(IntegrityError):
-        person_repository.add(person)

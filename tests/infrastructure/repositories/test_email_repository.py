@@ -56,7 +56,14 @@ def test_update_email_with_nonexistent_email(email_repository):
     email = Email(email_address="nomail@nomail.com", person_id=1)
     with pytest.raises(ValueError):
         email_repository.update(email)
-    
+        
+def test_update_email_raises_exception(email_repository, mocker):
+    email = Email(email_address="mail@nomail.com", person_id=1)
+    email_repository.add(email)
+    mocker.patch.object(GenericRepository, "update", side_effect=Exception("Test exception"))
+    with pytest.raises(Exception):
+        email_repository.update(email)
+        
 def test_delete_email(email_repository, test_session):
     email_to_delete = Email(email_address="test1@nomail.com", person_id=1, created_by="test", created_at=datetime.utcnow())
     email_repository.add(email_to_delete)
@@ -73,4 +80,10 @@ def test_delete_email_with_nonexistent_email(email_repository):
     with pytest.raises(ValueError):
         email_repository.delete(email)    
     
-    
+def test_delete_email_raises_exception(email_repository, mocker):
+    email_to_delete = Email(email_address="mail@nomail.com", person_id=1, created_by="test", created_at=datetime.utcnow())
+    email_repository.add(email_to_delete)
+    mocker.patch.object(GenericRepository, "delete", side_effect=Exception("Test exception"))
+
+    with pytest.raises(Exception):
+        email_repository.delete(email_to_delete)
