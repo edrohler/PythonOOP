@@ -8,8 +8,11 @@ class AddressService:
 
     def get_address_by_id(self, id: int) -> AddressVM:
         address_orm = self.uow.address_repository.get_by_id(id)
-        address_vm = self._map_to_vm(address_orm)
-        return address_vm
+        if address_orm:
+            address_vm = self._map_to_vm(address_orm)
+            return address_vm
+        else:
+            return None
 
     def get_all_addresses(self) -> list[AddressVM]:
         addresses_orm = self.uow.address_repository.get_all()

@@ -8,8 +8,11 @@ class PersonService:
 
     def get_person_by_id(self, id: int) -> PersonVM:
         person_orm = self.uow.person_repository.get_by_id(id)
-        person_vm = self._map_to_vm(person_orm)
-        return person_vm
+        if person_orm:
+            person_vm = self._map_to_vm(person_orm)
+            return person_vm
+        else:
+            return None
 
     def get_all_people(self) -> list[PersonVM]:
         people_orm = self.uow.person_repository.get_all()

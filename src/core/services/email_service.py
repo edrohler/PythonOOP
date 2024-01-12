@@ -8,8 +8,11 @@ class EmailService:
 
     def get_email_by_id(self, id: int) -> EmailVM:
         email_orm = self.uow.email_repository.get_by_id(id)
-        email_vm = self._map_to_vm(email_orm)
-        return email_vm
+        if email_orm:
+            email_vm = self._map_to_vm(email_orm)
+            return email_vm
+        else:
+            return None
 
     def get_all_emails(self) -> list[EmailVM]:
         emails_orm = self.uow.email_repository.get_all()
