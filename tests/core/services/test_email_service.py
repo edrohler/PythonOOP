@@ -30,7 +30,6 @@ def test_get_all_emails(mock_unit_of_work, mocker):
 def test_create_address(mock_unit_of_work, mocker):
     # Arrange
     email_service = EmailService(mock_unit_of_work)
-    mocker_commit = mocker.patch.object(mock_unit_of_work, "commit")
     email = Email(id=1, email_address="test1@nomail.com", person_id=1)
     mocker_add = mocker.patch.object(mock_unit_of_work.email_repository, "add")
     mocker_add.return_value = None
@@ -40,7 +39,6 @@ def test_create_address(mock_unit_of_work, mocker):
     
     # Assert
     mock_unit_of_work.email_repository.add.assert_called_once()
-    mocker_commit.assert_called_once()
     
 def test_update_email(mock_unit_of_work, mocker):
     # Arrange
@@ -61,11 +59,9 @@ def test_delete_email(mock_unit_of_work, mocker):
     email = Email(id=1, email_address="test1@nomail.com", person_id=1)
     mocker_delete = mocker.patch.object(mock_unit_of_work.email_repository, "delete")
     mocker_delete.return_value = None
-    mocker_commit = mocker.patch.object(mock_unit_of_work, "commit")
     
     # Act
     email_service.delete_email(email.id)
     
     # Assert
     mock_unit_of_work.email_repository.delete.assert_called_once()
-    mocker_commit.assert_called_once()

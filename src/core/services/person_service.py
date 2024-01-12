@@ -8,8 +8,11 @@ class PersonService:
 
     def get_person_by_id(self, id: int) -> PersonVM:
         person_orm = self.uow.person_repository.get_by_id(id)
-        person_vm = self._map_to_vm(person_orm)
-        return person_vm
+        if person_orm:
+            person_vm = self._map_to_vm(person_orm)
+            return person_vm
+        else:
+            return None
 
     def get_all_people(self) -> list[PersonVM]:
         people_orm = self.uow.person_repository.get_all()
@@ -20,7 +23,6 @@ class PersonService:
         person_orm = self._map_to_orm(person)
         person_orm.id = None
         self.uow.person_repository.add(person_orm)
-        self.uow.commit()
 
     def update_person(self, person: PersonVM):
         person_orm = self._map_to_orm(person)
@@ -30,7 +32,6 @@ class PersonService:
     def delete_person(self, id: int):
         person_orm = self.uow.person_repository.get_by_id(id)
         deleted_person = self.uow.person_repository.delete(person_orm)
-        self.uow.commit()
         return deleted_person
         
 

@@ -31,7 +31,6 @@ def test_get_all_addresses(mock_unit_of_work, mocker):
 def test_create_address(mock_unit_of_work, mocker):
     # Arrange
     address_service = AddressService(mock_unit_of_work)
-    mocker_commit = mocker.patch.object(mock_unit_of_work, "commit")
     address = Address(id=1, address_line_1="123 Main St", address_line_2="", city="New York", state="NY", zip_code="10001", person_id=1)
     mocker_add = mocker.patch.object(mock_unit_of_work.address_repository, "add")
     mocker_add.return_value = None
@@ -41,7 +40,6 @@ def test_create_address(mock_unit_of_work, mocker):
     
     # Assert
     mock_unit_of_work.address_repository.add.assert_called_once()
-    mocker_commit.assert_called_once()
     
 def test_update_address(mock_unit_of_work, mocker):
     # Arrange

@@ -8,8 +8,11 @@ class AddressService:
 
     def get_address_by_id(self, id: int) -> AddressVM:
         address_orm = self.uow.address_repository.get_by_id(id)
-        address_vm = self._map_to_vm(address_orm)
-        return address_vm
+        if address_orm:
+            address_vm = self._map_to_vm(address_orm)
+            return address_vm
+        else:
+            return None
 
     def get_all_addresses(self) -> list[AddressVM]:
         addresses_orm = self.uow.address_repository.get_all()
@@ -20,7 +23,6 @@ class AddressService:
         address_orm = self._map_to_orm(address)
         address_orm.id = None
         self.uow.address_repository.add(address_orm)
-        self.uow.commit()
 
     def update_address(self, address: AddressVM):
         address_orm = self._map_to_orm(address)
@@ -30,7 +32,6 @@ class AddressService:
     def delete_address(self, id: int):
         address_orm = self.uow.address_repository.get_by_id(id)
         deleted_address = self.uow.address_repository.delete(address_orm)
-        self.uow.commit()
         return deleted_address
         
     def _map_to_orm(self, address: AddressVM) -> AddressORM:

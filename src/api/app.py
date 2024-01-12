@@ -22,7 +22,7 @@ uow = UnitOfWork.get_instance(db_config, logger)
 
 app = Flask(__name__)
 
-api_version = "1"
+api_version = "1.0"
 
 # Create blueprint
 blueprint = Blueprint("api", __name__)

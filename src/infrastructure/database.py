@@ -1,6 +1,6 @@
-import datetime
+from datetime import datetime
 from sqlalchemy import create_engine, event
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, class_mapper
 
 from src.core.services.logging_service import LoggingService
 from .orm.entities import BaseEntity
@@ -26,7 +26,6 @@ class DatabaseConfig:
     def init_engine(self):
         self.engine = create_engine(self.database_uri, echo=self.echo)
         self.Session = sessionmaker(bind=self.engine)
-        # self.register_listeners()
         self.logger.log_info(f"Initialized database engine with URI {self.database_uri}")
 
     def init_db(self):
@@ -39,30 +38,28 @@ class DatabaseConfig:
     def get_session(self):
         """ Returns a new session instance from the session factory """
         if not self.Session:
+            self.logger.log_info("No session available. Initializing")
             self.init_engine()
-        self.logger.log_info("Created new session")
+        self.register_listeners()
+        self.logger.log_info("Returning session")
         return self.Session()
         
-    # def register_listeners(self):
-    #     self.logger.log_info("Registering event listeners")
-    #     event.listen(BaseEntity, 'before_insert', self.before_insert_listener)
-    #     self.logger.log_info("Registered before_insert listener")
-    #     event.listen(BaseEntity, 'before_update', self.before_update_listener)
-    #     self.logger.log_info("Registered before_update listener")
-    
-    # def before_insert_listener(self, connection, target):
-    #     self.logger.log_info("before_insert_listener")
-    #     target.created_at = datetime.utcnow()
-    #     target.created_by = connection.info.get("user", "system")
+    def register_listeners(self):
+        """ Registers event listeners for all entities """
+        self.logger.log_info("Registering event listeners")
+        for cls in BaseEntity.__subclasses__():
+                mapped_class = class_mapper(cls)
+                event.listen(mapped_class, 'before_insert', self.before_insert_listener)
+                self.logger.log_info(f"Registered before_insert listener for {cls.__name__}")
+                event.listen(mapped_class, 'before_update', self.before_update_listener)
+                self.logger.log_info(f"Registered before_update listener for {cls.__name__}")
 
-    # def before_update_listener(self, connection, target):
-    #     self.logger.log_info("before_update_listener")
-    #     target.updated_at = datetime.utcnow()
-    #     target.updated_by = connection.info.get("user", "system")
-
-def init_db(config):
-    config.init_db()
-
-def get_session(config):
-    return config.get_session()
+    @staticmethod
+    def before_insert_listener(mapper, connection, target):
+        target.created_at = datetime.utcnow()
+        target.created_by = "system" # TODO: Get user from session
+    @staticmethod
+    def before_update_listener(mapper, connection, target):
+        target.updated_at = datetime.utcnow()
+        target.updated_by = "system" # TODO: Get user from session
     

@@ -34,3 +34,9 @@ def test_session(test_database_config):
 @pytest.fixture
 def mock_unit_of_work(test_database_config, mock_logger):
     return UnitOfWork.get_instance(test_database_config, mock_logger)
+
+@pytest.fixture
+def client():
+    from src.api.app import app
+    with app.test_client() as client:
+        yield client
