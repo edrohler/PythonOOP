@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, './src')
 
 from src.api.endpoints.person import create_person_ns
+from src.core.services.person_service import PersonService
 
 def test_get_all_people(client, mocker, mock_unit_of_work, mock_logger):
     # Arrange
@@ -45,10 +46,10 @@ def test_create_person(client, mocker, mock_unit_of_work, mock_logger):
     app.config['APPLICATION_ROOT'] = '/'
     app.config['PREFERRED_URL_SCHEME'] = 'http'
     mock_create_person = mocker.patch('src.api.endpoints.person.PersonService.create_person')
-    mock_create_person.return_value = {"message": "Person created"}
+    mock_create_person.return_value = {"message": "Person broken"}
 
     # Act
-    with app.app_context():
+    with mock_create_person, app.app_context():
         create_person_ns(Api(), "1.0", mock_unit_of_work, mock_logger)
         response = client.post(url_for('api.Person Endpoints_people_list'), json={"id": 0, "first_name": "John", "last_name": "Doe", "gender": "M", "age": 30})
 
@@ -102,7 +103,7 @@ def test_delete_person(client, mocker, mock_unit_of_work, mock_logger):
     app.config['APPLICATION_ROOT'] = '/'
     app.config['PREFERRED_URL_SCHEME'] = 'http'        
     mock_delete_person = mocker.patch('src.api.endpoints.person.PersonService.delete_person')
-    mock_delete_person.return_value = {"message": "Person deleted successfully"}
+    mock_delete_person.return_value = {"message": "Person with id: 1 deleted"}
 
     # Act
     with app.app_context():
