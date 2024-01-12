@@ -13,9 +13,9 @@ def schema_to_api_model(schema: Schema, api: Api):
         elif isinstance(field, ma_fields.Boolean):
             model_fields[field_name] = restx_fields.Boolean()
         elif isinstance(field, ma_fields.Nested):
-            model_fields[field_name] = restx_fields.Nested(schema_to_api_model(field.schema))
+            model_fields[field_name] = restx_fields.Nested(schema_to_api_model(field.schema, api))
         # Add other field types as needed
         else:
             raise NotImplementedError(f"Field type {type(field)} not supported")
 
-    return api.model(schema.__name__, model_fields)
+    return api.model(schema.__class__.__name__, model_fields)
