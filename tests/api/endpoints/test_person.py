@@ -2,12 +2,10 @@ from flask_restx import Api
 import pytest
 from flask import url_for
 
-    
 import sys
 sys.path.insert(0, "./src")
 
 from src.api.endpoints.person import create_person_ns
-from src.core.services.person_service import PersonService
 
 def test_get_all_people(client, mocker, mock_unit_of_work, mock_logger):
     # Arrange
@@ -93,7 +91,7 @@ def test_update_person(client, mocker, mock_unit_of_work, mock_logger):
     assert response.status_code == 200
     assert response.json["message"] == "Person updated"
     
-def test_update_person_with_id_of_none(mocker, mock_unit_of_work, mock_logger, client):
+def test_update_person_with_id_of_0(mocker, mock_unit_of_work, mock_logger, client):
     # Arrange
     from src.api.app import app
     app.config["SERVER_NAME"] = "localhost:5000"
@@ -150,6 +148,24 @@ def test_get_person_by_id(client, mocker, mock_unit_of_work, mock_logger):
     assert response.status_code == 200
     assert response.json["id"] == 1
     ...
+    
+def test_get_person_by_id_with_exception(mocker, mock_unit_of_work, mock_logger, client):
+    #Arrange
+    from src.api.app import app
+    app.config["SERVER_NAME"] = "localhost:5000"
+    app.config["APPLICATION_ROOT"] = "/"
+    app.config["PREFERRED_URL_SCHEME"] = "http"
+    mock_get_person_by_id = mocker.patch("src.api.endpoints.person.PersonService.get_person_by_id")
+    mock_get_person_by_id.return_value = {"message": "Person not found"}
+    
+    #Act
+    with app.app_context():
+        create_person_ns(Api(), "1.0", mock_unit_of_work, mock_logger)
+        response = client.get(url_for("api.Person Endpoints_people_resource", id=999))
+        
+    #Assert
+    assert response.status_code == 200
+    assert response.json["message"] == "Person not found"
 
 def test_delete_person(client, mocker, mock_unit_of_work, mock_logger):
     # Arrange
