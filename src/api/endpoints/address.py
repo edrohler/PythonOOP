@@ -7,7 +7,7 @@ from src.core.services.address_service import AddressService
 from src.infrastructure.unit_of_work import UnitOfWork
 
 def create_address_ns(api, uow: UnitOfWork, version, logger: LoggingService):
-    ns = Namespace(f"Adddress Endpoints", description="Address API", path=f"/api/v{version}/address")
+    ns = Namespace(f"Address Endpoints", description="Address API", path=f"/api/v{version}/address")
     address_model = schema_to_api_model(AddressSchema, api)
     address_service = AddressService(uow)
     @ns.route("/")
