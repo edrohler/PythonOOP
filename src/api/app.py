@@ -10,32 +10,37 @@ from .endpoints.address import create_address_ns
 from .endpoints.email import create_email_ns
 from .endpoints.person import create_person_ns
 
-# Configure logging
-logger = LoggingService(logger_name="api", log_level="DEBUG", handler=logging.FileHandler("logs/.log"))
+def create_app(debug=False, use_reloader=False, database_uri="sqlite:///database.db", echo=True, log_level="DEBUG"):
+    # Configure logging
+    logger = LoggingService(logger_name="api", log_level=log_level, handler=logging.FileHandler("logs/.log"))
 
-# Configure database
-db_config = DatabaseConfig.get_instance(database_uri="sqlite:///database.db", echo=True, logger=logger)
-db_config.init_db()
+    # Configure database
+    db_config = DatabaseConfig.get_instance(database_uri=database_uri, echo=echo, logger=logger)
+    db_config.init_db()
 
-# Create UnitOfWork
-uow = UnitOfWork.get_instance(db_config, logger)
+    # Create UnitOfWork
+    uow = UnitOfWork.get_instance(db_config, logger)
 
-app = Flask(__name__)
+    app = Flask(__name__)
+    app.debug = debug
+    app.use_reloader = use_reloader
+    
+    api_version = "1.0"
 
-api_version = "1.0"
+    # Create blueprint
+    blueprint = Blueprint("api", __name__)
+    api = Api(blueprint, version=api_version, title="API", description="A Simple API")
 
-# Create blueprint
-blueprint = Blueprint("api", __name__)
-api = Api(blueprint, version=api_version, title="API", description="A Simple API")
+    # Add Namespaces
+    address_version = "1"
+    api.add_namespace(create_address_ns(api, uow, address_version, logger))
+    email_version = "1"
+    api.add_namespace(create_email_ns(api, uow, email_version, logger))
+    person_version = "1"
+    api.add_namespace(create_person_ns(api, uow, person_version, logger))
 
-# Add Namespaces
-address_version = "1"
-api.add_namespace(create_address_ns(api, uow, address_version, logger))
-email_version = "1"
-api.add_namespace(create_email_ns(api, uow, email_version, logger))
-person_version = "1"
-api.add_namespace(create_person_ns(api, uow, person_version, logger))
-
-# Register blueprint
-app.register_blueprint(blueprint)
+    # Register blueprint
+    app.register_blueprint(blueprint)
+    
+    return app
 
