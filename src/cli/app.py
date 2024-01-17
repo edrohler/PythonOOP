@@ -26,7 +26,7 @@ def run_cli(uow, logger):
     while True:
         print("Welcome to the CLI!")
 
-        choice = input("What would you like to do? (1) Enter the Person Context, (2) Enter the Address Context, (3) Enter the Email Context, (4) Exit: ")
+        choice = input("What would you like to do? (1) Enter the Person Context, (2) Enter the Address Context, (3) Enter the Email Context, (4) Exit:\n")
         
         if choice == "1":
             handle_person_context(uow, logger)
@@ -41,7 +41,24 @@ def run_cli(uow, logger):
             
 def handle_person_context(uow, logger):
     # Implement person context functionality
-    print("Person Context - Not implemented yet.")
+    while True:
+        print("Welcome to the Person Context!")
+        choice = input("What would you like to do? (1) Create a Person, (2) Read a Person, (3) Update a Person, (4) Delete a Person, (5) Get All (6) Exit:\n")
+        
+        if choice == "1":
+            print("Create Person - Not implemented yet.")
+        elif choice == "2":
+            print("Read Person - Not implemented yet.")
+        elif choice == "3":
+            print("Update Person - Not implemented yet.")
+        elif choice == "4":
+            print("Delete Person - Not implemented yet.")
+        elif choice == "5":
+            print("Get All - Not implemented yet.")
+        elif choice == "6":
+            break
+        else:
+            print("Invalid choice. Please choose between 1 and 4.")
 
 def handle_address_context(uow, logger):
     # Implement address context functionality
