@@ -4,18 +4,16 @@ from src.core.services.logging_service import LoggingService
 from src.infrastructure.database import DatabaseConfig
 from src.infrastructure.unit_of_work import UnitOfWork
 
-def app(debug=False):
-    
-    print()
+def create_app(debug=False,database_uri="sqlite:///database.db", echo=True, log_level="DEBUG"):
     
     _log_level = "DEBUG" if debug else "INFO"
     _echo = True if debug else False
     
     # Configure logging
-    logger = LoggingService(logger_name="cli", log_level=_log_level, handler=logging.FileHandler("logs/.log"))
+    logger = LoggingService(logger_name="cli", log_level=log_level, handler=logging.FileHandler("logs/.log"))
 
     # Configure database
-    db_config = DatabaseConfig.get_instance(database_uri="sqlite:///database.db", echo=_echo, logger=logger)
+    db_config = DatabaseConfig.get_instance(database_uri=database_uri, echo=echo, logger=logger)
     db_config.init_db()
 
     # Create Unit of Work
