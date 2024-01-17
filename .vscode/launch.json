@@ -12,6 +12,18 @@
                 "--serve",
                 "--debug"
             ]
+        },
+        {
+            "name": "Debug CLI",
+            "type": "python",
+            "request": "launch",
+            "program": "src/main.py",
+            "console": "internalConsole",
+            "justMyCode": false,
+            "args": [
+                "--cli",
+                "--debug"
+            ]
         }
     ]
 }
