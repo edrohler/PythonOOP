@@ -18,7 +18,7 @@
             "type": "python",
             "request": "launch",
             "program": "src/main.py",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
                 "--cli",
