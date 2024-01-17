@@ -3,8 +3,8 @@ import argparse
 import sys
 sys.path.append(".")
 
-from api.app import app
-from cli.app import app as cli
+from api.app import create_app as api
+from cli.app import create_app as cli
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Start the Flask app")
@@ -19,9 +19,11 @@ def main():
     args = parse_arguments()
 
     if args.serve and args.debug:
-        app.run(debug=True, use_reloader=True)
+        app = api(debug=True, use_reloader=True)
+        app.run()
     elif args.serve:
-        app.run(debug=False, use_reloader=False)
+        app = api(debug=False, use_reloader=False)
+        app.run()
         
     if args.cli and args.debug:
         cli(debug=True)
